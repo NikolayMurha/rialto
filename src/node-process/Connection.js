@@ -43,10 +43,17 @@ class Connection extends EventEmitter
     {
         socket.setEncoding('utf8');
 
+        var fullData = '';
         socket.on('data', data => {
-            this.emit('activity');
-
-            this.handleSocketData(data);
+            fullData += data
+            
+            if (data.length < 65536) {
+                this.emit('activity');
+                
+                this.handleSocketData(fullData);
+                
+                fullData = '';
+            }
         });
 
         return socket;
